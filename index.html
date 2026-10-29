@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kaliko — private AI on your own PC</title>
+<meta name="description" content="Kaliko is private AI on your own PC. Turn the dial: fourteen things it does and makes, all on your computer. Local by default, works offline.">
+<meta property="og:title" content="Kaliko — private AI on your own PC">
+<meta property="og:description" content="Fourteen things Kaliko does and makes, all on your own PC.">
+<meta property="og:image" content="https://kalikoproject.com/icon.png">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --body: #e9e9e4;      /* the casing */
+    --ink: #111111;
+    --ink-2: #55554f;
+    --ink-3: #6b6b64;
+    --line: #c9c9c2;
+    --knob: #f4f4f0;
+    --screen: #121212;
+    --lcd: #ffd400;       /* the one signal colour */
+    --lcd-dim: #a08a1e;
+    --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", monospace;
+    --sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--body); color: var(--ink); }
+  body { font: 15px/1.5 var(--mono); -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .skip { position: absolute; left: 16px; top: -48px; background: var(--ink); color: var(--body); padding: 8px 16px; }
+  .skip:focus { top: 16px; }
+
+  .bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 56px; padding: 0 24px;
+         border-bottom: 1px solid var(--line); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+  .bar .mark { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+  .bar .mark img { width: 20px; height: 20px; }
+  .bar .count { font-variant-numeric: tabular-nums; }
+  .bar .ship { justify-self: end; color: var(--ink-2); }
+
+  .device { max-width: 1200px; margin: 0 auto; padding: 48px 24px 64px;
+            display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+
+  /* the dial */
+  .dial-wrap { position: relative; width: min(100%, 560px); aspect-ratio: 1; margin: 0 auto; touch-action: none; user-select: none; }
+  .face { position: absolute; inset: 0; }
+  .stop { position: absolute; transform: translate(-50%, -50%);
+          font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3);
+          background: none; border: 0; padding: 6px 4px; cursor: pointer; white-space: nowrap; }
+  .stop:hover { color: var(--ink); }
+  .stop[aria-current="true"] { color: var(--ink); font-weight: 600; }
+  .knob { position: absolute; inset: 21%; border-radius: 50%; cursor: grab; }
+  .knob:active { cursor: grabbing; }
+  .knob svg { width: 100%; height: 100%; display: block; }
+  .rotor { transform-origin: 100px 100px; }
+  @media (prefers-reduced-motion: no-preference) { .rotor { transition: transform .35s cubic-bezier(.3, .7, .2, 1); } }
+  .hint { text-align: center; margin-top: 16px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+
+  /* the display */
+  .screen { background: var(--screen); color: var(--lcd); border-radius: 14px; padding: 28px;
+            box-shadow: inset 0 0 0 1px #000, inset 0 2px 12px rgba(0,0,0,.6); min-height: 380px;
+            display: flex; flex-direction: column; gap: 20px; }
+  .screen .top { display: flex; justify-content: space-between; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--lcd-dim); }
+  .screen h2 { font: 600 clamp(32px, 4.4vw, 52px)/1 var(--mono); letter-spacing: -0.01em; text-transform: uppercase; }
+  .screen p.what { font-size: 16px; color: #f2f2ec; max-width: 34em; }
+  .example { border-top: 1px dashed #3a3a32; padding-top: 16px; display: grid; gap: 8px; font-size: 14px; margin-top: auto; }
+  .example .tag { font-size: 11px; letter-spacing: .12em; color: var(--lcd-dim); }
+  .example .you { color: #f2f2ec; }
+  .example .you::before { content: "> "; color: var(--lcd); }
+  .example .k::before { content: "< "; }
+
+  .claim { max-width: 1200px; margin: 0 auto; padding: 0 24px 64px; }
+  .claim h1 { font: 600 clamp(36px, 6.4vw, 80px)/1 var(--sans); letter-spacing: -0.035em; max-width: 13ch; }
+  .promises { margin-top: 32px; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--ink); }
+  .promises div { padding: 16px 16px 0 0; }
+  .promises b { display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+  .promises span { color: var(--ink-2); font-size: 13px; }
+
+  footer { border-top: 1px solid var(--line); padding: 20px 24px; display: flex; justify-content: space-between; gap: 16px;
+           flex-wrap: wrap; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+
+  @media (max-width: 860px) {
+    .device { grid-template-columns: 1fr; gap: 32px; padding: 32px 16px 48px; }
+    .bar { padding: 0 16px; grid-template-columns: 1fr auto; }
+    .bar .ship { display: none; }
+    .claim { padding: 0 16px 48px; }
+    .promises { grid-template-columns: 1fr 1fr; gap: 0 16px; }
+    .screen { min-height: 0; padding: 22px; }
+    footer { padding: 20px 16px; }
+  }
+  @media (max-width: 480px) { .stop { font-size: 9px; letter-spacing: .04em; padding: 4px 2px; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#display">Skip to the display</a>
+
+<header class="bar">
+  <span class="mark"><img src="icon.png" alt="">Kaliko</span>
+  <span class="count" aria-hidden="true"><span id="n">01</span> / 14</span>
+  <span class="ship">Windows · end of 2026</span>
+</header>
+
+<main>
+  <div class="device">
+    <div>
+      <div class="dial-wrap" id="dial">
+        <div class="face" id="face"></div>
+        <div class="knob" id="knob" role="slider" tabindex="0" aria-label="What Kaliko does and makes"
+             aria-valuemin="1" aria-valuemax="14" aria-valuenow="1" aria-valuetext="Chat">
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <circle cx="100" cy="100" r="99" fill="#d4d4ce"/>
+            <g class="rotor" id="rotor">
+              <circle cx="100" cy="100" r="93" fill="#f4f4f0" stroke="#c4c4bc"/>
+              <g id="grip" stroke="#cfcfc7" stroke-width="2"></g>
+              <circle cx="100" cy="100" r="64" fill="#efefea" stroke="#d6d6cf"/>
+              <rect x="97" y="14" width="6" height="34" rx="3" fill="#111"/>
+              <circle cx="100" cy="24" r="3" fill="#ffd400"/>
+            </g>
+            <text x="100" y="103" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.5" fill="#6b6b64">KALIKO</text>
+          </svg>
+        </div>
+      </div>
+      <p class="hint">Turn the dial: drag, scroll, or use the arrow keys</p>
+    </div>
+
+    <section class="screen" id="display" aria-live="polite" tabindex="-1">
+      <div class="top"><span id="group">Does</span><span id="code">01</span></div>
+      <h2 id="name">Chat</h2>
+      <p class="what" id="what">Answers and writing from models that run on your PC.</p>
+      <div class="example">
+        <span class="tag">EXAMPLE</span>
+        <span class="you" id="ask">Make this email shorter and kinder.</span>
+        <span class="k" id="answer">Here's a shorter version you can send.</span>
+      </div>
+    </section>
+  </div>
+
+  <div class="claim">
+    <h1>Private AI on your own PC.</h1>
+    <div class="promises">
+      <div><b>Local first</b><span>Models, chats and files stay on your computer.</span></div>
+      <div><b>Offline</b><span>No internet, and it keeps working.</span></div>
+      <div><b>No account</b><span>Install it and start.</span></div>
+      <div><b>You approve</b><span>Anything that sends or changes something asks first.</span></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>Kaliko · Windows, through the Microsoft Store, end of 2026</span>
+  <span>© 2026</span>
+</footer>
+
+<script>
+  // The fourteen stops: eight things Kaliko does, six it makes. Each example is a plain illustration.
+  const STOPS = [
+    ["Chat", "Does", "Answers and writing from models that run on your PC.", "Make this email shorter and kinder.", "Here's a shorter version you can send."],
+    ["Web", "Does", "Looks things up and reads pages, when you turn it on.", "Will it rain this weekend?", "Saturday is dry. Sunday has a 70% chance of rain."],
+    ["Your apps", "Does", "Works in Chrome and apps like WhatsApp, with a frame and cursor you can see.", "Reply 'on my way' in the family group.", "Approve: send 'on my way'?"],
+    ["Your files", "Does", "Reads a folder's PDFs, Word and Excel files, and answers from them.", "What's the notice period in this contract?", "Thirty days, in section 9."],
+    ["Your day", "Does", "A morning brief, your inbox sorted by what needs an answer, and your tasks.", "Brief me.", "Two emails need replies, and one task is due today."],
+    ["Routines", "Does", "Reminders and automations that run on their own and ask before they send.", "Every morning at 8, give me the headlines.", "Saved. It runs at 8 each morning."],
+    ["Teams", "Does", "For a bigger goal, a small team of roles: planner, researcher, reviewer.", "Plan a product launch with me.", "Team ready: a planner, a researcher and a reviewer."],
+    ["Code", "Does", "Works on a code project: reads, edits, and runs commands you approve.", "Fix the failing test.", "Approve: run the tests?"],
+    ["Documents", "Makes", "Reports and letters as PDF or Word, saved in your folder.", "Write a one-page summary as a PDF.", "Summary.pdf is saved in this folder."],
+    ["Sheets", "Makes", "Spreadsheets as Excel or CSV.", "Make a budget with a total for each month.", "Budget.xlsx is ready."],
+    ["Slides", "Makes", "Decks as PowerPoint.", "Turn these notes into five slides.", "Notes.pptx: five slides."],
+    ["Pictures", "Makes", "Images, drawn on your PC.", "Draw a poster for a bake sale.", "poster.png, made on this PC."],
+    ["Apps", "Makes", "Small tools you describe, built and run on your PC.", "Build me an expense tracker.", "Expense Tracker is on your Home."],
+    ["Automations", "Makes", "Routines you describe in a sentence, kept and run for you.", "When a file lands in Invoices, add it to my sheet.", "Saved. It asks before it changes the sheet."],
+  ];
+  const N = STOPS.length, STEP = 360 / N;
+  const dial = document.getElementById("dial"), face = document.getElementById("face"),
+        knob = document.getElementById("knob"), rotor = document.getElementById("rotor");
+  let index = 0, turns = 0;   // turns: the knob keeps going round, never spins back the long way
+
+  // knurling on the knob's edge
+  const grip = document.getElementById("grip");
+  for (let i = 0; i < 72; i++) {
+    const a = i * 5 * Math.PI / 180;
+    grip.insertAdjacentHTML("beforeend",
+      `<line x1="${(100 + 85 * Math.sin(a)).toFixed(1)}" y1="${(100 - 85 * Math.cos(a)).toFixed(1)}" x2="${(100 + 92 * Math.sin(a)).toFixed(1)}" y2="${(100 - 92 * Math.cos(a)).toFixed(1)}"/>`);
+  }
+  // the scale around the knob: a tick per stop (long for "does", short for "makes"), and its name
+  const scale = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  scale.setAttribute("viewBox", "0 0 200 200");
+  scale.setAttribute("aria-hidden", "true");
+  scale.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none";
+  face.appendChild(scale);
+  STOPS.forEach(([name], i) => {
+    const a = (i * STEP) * Math.PI / 180;
+    const r1 = i < 8 ? 64 : 66.5, r2 = 70;
+    scale.insertAdjacentHTML("beforeend",
+      `<line x1="${100 + r1 * Math.sin(a)}" y1="${100 - r1 * Math.cos(a)}" x2="${100 + r2 * Math.sin(a)}" y2="${100 - r2 * Math.cos(a)}" stroke="#111" stroke-width="${i < 8 ? 1.4 : .8}"/>`);
+    const b = document.createElement("button");
+    b.className = "stop"; b.type = "button"; b.textContent = name; b.tabIndex = -1;
+    const r = 41;   // percent of the dial's width, just outside the ticks
+    b.style.left = (50 + r * Math.sin(a)) + "%"; b.style.top = (50 - r * Math.cos(a)) + "%";
+    b.addEventListener("click", () => go(i));
+    face.appendChild(b);
+  });
+  const buttons = face.querySelectorAll(".stop");
+
+  function go(i) {
+    const next = ((i % N) + N) % N;
+    let delta = next - index;
+    if (delta > N / 2) delta -= N;
+    if (delta < -N / 2) delta += N;
+    turns += delta; index = next;
+    rotor.style.transform = `rotate(${turns * STEP}deg)`;
+    const [name, group, what, ask, answer] = STOPS[index];
+    const code = String(index + 1).padStart(2, "0");
+    document.getElementById("n").textContent = code;
+    document.getElementById("code").textContent = code;
+    document.getElementById("group").textContent = group;
+    document.getElementById("name").textContent = name;
+    document.getElementById("what").textContent = what;
+    document.getElementById("ask").textContent = ask;
+    document.getElementById("answer").textContent = answer;
+    knob.setAttribute("aria-valuenow", index + 1);
+    knob.setAttribute("aria-valuetext", name);
+    buttons.forEach((b, j) => b.setAttribute("aria-current", j === index ? "true" : "false"));
+  }
+
+  knob.addEventListener("keydown", (e) => {
+    const keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+    if (e.key in keys) { e.preventDefault(); go(index + keys[e.key]); }
+    if (e.key === "Home") { e.preventDefault(); go(0); }
+    if (e.key === "End") { e.preventDefault(); go(N - 1); }
+  });
+
+  // drag: the stop nearest the pointer's angle
+  let dragging = false;
+  function fromPointer(e) {
+    const r = dial.getBoundingClientRect();
+    const angle = Math.atan2(e.clientX - (r.left + r.width / 2), -(e.clientY - (r.top + r.height / 2))) * 180 / Math.PI;
+    go(Math.round(((angle + 360) % 360) / STEP) % N);
+  }
+  knob.addEventListener("pointerdown", (e) => { dragging = true; knob.setPointerCapture(e.pointerId); knob.focus(); });
+  knob.addEventListener("pointermove", (e) => { if (dragging) fromPointer(e); });
+  knob.addEventListener("pointerup", () => { dragging = false; });
+
+  // scroll over the dial turns it one stop at a time
+  let last = 0;
+  dial.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const now = performance.now();
+    if (now - last < 140) return;
+    last = now;
+    go(index + (e.deltaY > 0 ? 1 : -1));
+  }, { passive: false });
+
+  go(0);
+</script>
+</body>
+</html>

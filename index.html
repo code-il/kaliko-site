@@ -3,176 +3,448 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kaliko — private AI on your own PC</title>
-<meta name="description" content="Kaliko is private AI on your own PC. Turn the dial: fourteen things it does and makes, all on your computer. Local by default, works offline.">
-<meta property="og:title" content="Kaliko — private AI on your own PC">
-<meta property="og:description" content="Fourteen things Kaliko does and makes, all on your own PC.">
-<meta property="og:image" content="https://kalikoproject.com/icon.png">
+<title>Kaliko Workspace: the Spark for the lower end</title>
+<meta name="description" content="Kaliko Workspace runs local AI models on the PC you already have. A 4 GB graphics card is enough. Private by default, and you decide how your models run.">
+<meta property="og:title" content="Kaliko Workspace: the Spark for the lower end">
+<meta property="og:description" content="Local AI on the PC you already have. A 4 GB graphics card is enough.">
+<meta property="og:image" content="https://kalikoproject.com/img/chat.webp">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --body: #e9e9e4;      /* the casing */
-    --ink: #111111;
-    --ink-2: #55554f;
-    --ink-3: #6b6b64;
-    --line: #c9c9c2;
-    --knob: #f4f4f0;
-    --screen: #121212;
-    --lcd: #ffd400;       /* the one signal colour */
-    --lcd-dim: #a08a1e;
+    --bg: #f7f7f4;
+    --paper: #ffffff;
+    --ink: #0c0c0d;
+    --ink-2: #4f4f55;
+    --ink-3: #7a7a80;
+    --line: #e4e4df;
+    --dark: #0c0c0d;
+    --dark-2: #17171a;
+    --dark-line: #2a2a2e;
+    --on-dark: #f3f3ef;
+    --on-dark-2: #a3a3a8;
+    --signal: #ffd400;
+    --good: #22c55e;
+    --slow: #f59e0b;
+    --display: "Inter Tight", "Inter", "Segoe UI", system-ui, sans-serif;
+    --sans: "Inter", "Segoe UI", system-ui, sans-serif;
     --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", monospace;
-    --sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --wrap: 1200px;
+    --gutter: 24px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: var(--body); color: var(--ink); }
-  body { font: 15px/1.5 var(--mono); -webkit-font-smoothing: antialiased; }
-  :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
-  .skip { position: absolute; left: 16px; top: -48px; background: var(--ink); color: var(--body); padding: 8px 16px; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+  img { display: block; max-width: 100%; height: auto; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 4px; }
+  .skip { position: absolute; left: 16px; top: -48px; background: var(--ink); color: var(--bg); padding: 8px 16px; z-index: 20; }
   .skip:focus { top: 16px; }
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gutter); }
 
-  .bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 56px; padding: 0 24px;
-         border-bottom: 1px solid var(--line); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
-  .bar .mark { display: flex; align-items: center; gap: 10px; font-weight: 600; }
-  .bar .mark img { width: 20px; height: 20px; }
-  .bar .count { font-variant-numeric: tabular-nums; }
-  .bar .ship { justify-self: end; color: var(--ink-2); }
+  .eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+  h1, h2, h3 { font-family: var(--display); font-weight: 600; letter-spacing: -0.035em; line-height: 1.02; }
+  h2 { font-size: clamp(32px, 4.4vw, 56px); max-width: 18ch; }
+  h3 { font-size: 20px; letter-spacing: -0.02em; line-height: 1.2; }
+  .lede { font-size: clamp(17px, 1.6vw, 20px); color: var(--ink-2); max-width: 38ch; }
 
-  .device { max-width: 1200px; margin: 0 auto; padding: 48px 24px 64px;
-            display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 22px; border-radius: 999px;
+         font: 500 15px/1 var(--sans); text-decoration: none; border: 1px solid transparent; }
+  .btn-primary { background: var(--ink); color: var(--bg); }
+  .btn-primary:hover { background: #2a2a2e; }
+  .btn-ghost { color: var(--ink); border-color: var(--line); background: var(--paper); }
+  .btn-ghost:hover { border-color: var(--ink-3); }
+
+  /* nav */
+  .nav { position: sticky; top: 0; z-index: 10; background: rgba(247, 247, 244, .86);
+         backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px);
+         border-bottom: 1px solid var(--line); }
+  .nav .wrap { display: flex; align-items: center; gap: 32px; height: 64px; }
+  .mark { display: flex; align-items: center; gap: 10px; font: 600 17px/1 var(--display); letter-spacing: -0.02em; text-decoration: none; }
+  .mark img { width: 24px; height: 24px; }
+  .nav ul { display: flex; gap: 28px; list-style: none; font-size: 14px; color: var(--ink-2); }
+  .nav ul a { text-decoration: none; }
+  .nav ul a:hover { color: var(--ink); }
+  .nav .ship { margin-left: auto; font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2);
+               display: flex; align-items: center; gap: 8px; }
+  .nav .ship::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 0 3px rgba(255, 212, 0, .25); }
+
+  /* hero */
+  .hero { padding: 96px 0 0; }
+  .hero h1 { font-size: clamp(46px, 8vw, 108px); letter-spacing: -0.05em; line-height: .95; max-width: 11ch; margin: 20px 0 28px; }
+  .hero .row { display: grid; grid-template-columns: minmax(0, 1fr) 400px; align-items: end; gap: 48px; }
+  .hero .row h1 { margin-bottom: 0; }
+  .hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .shot { margin-top: 64px; background: var(--dark); border-radius: 22px; padding: 10px; box-shadow: 0 40px 80px -40px rgba(12, 12, 13, .45); }
+  .shot .chrome { display: flex; gap: 7px; padding: 6px 8px 12px; }
+  .shot .chrome i { width: 11px; height: 11px; border-radius: 50%; background: #3a3a3e; }
+  .shot img { border-radius: 12px; }
+  .caption { margin-top: 14px; font-size: 14px; color: var(--ink-3); }
+
+  /* runtimes + stats */
+  .runs { padding: 56px 0 0; display: flex; gap: 12px 28px; flex-wrap: wrap; align-items: center; color: var(--ink-2); font-size: 15px; }
+  .runs b { font: 600 18px/1 var(--display); letter-spacing: -0.02em; color: var(--ink); }
+  .runs .sep { color: var(--line); }
+  .stats { margin-top: 56px; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--ink); }
+  .stats div { padding: 24px 24px 0 0; }
+  .stats strong { display: block; font: 600 clamp(36px, 4vw, 52px)/1 var(--display); letter-spacing: -0.04em; }
+  .stats span { display: block; margin-top: 10px; font-size: 14px; color: var(--ink-2); max-width: 22ch; }
+  .note { margin-top: 20px; font-size: 13px; color: var(--ink-3); }
+
+  section.block { padding: 128px 0 0; }
+
+  /* system intelligence */
+  .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; align-items: center; }
+  .split h2 { margin: 16px 0 20px; }
+  .verdicts { margin-top: 32px; list-style: none; border-top: 1px solid var(--line); }
+  .verdicts li { display: grid; grid-template-columns: 130px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 15px; color: var(--ink-2); }
+  .verdicts b { color: var(--ink); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .verdicts b::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+  .card-dark { background: var(--dark); border-radius: 22px; padding: 28px; }
+  .card-dark img { border-radius: 12px; margin: 0 auto; max-width: 440px; width: 100%; }
+
+  /* the spark band */
+  .spark { margin-top: 128px; background: var(--dark); color: var(--on-dark); padding: 112px 0; }
+  .spark .eyebrow { color: var(--signal); }
+  .spark h2 { margin: 16px 0 20px; max-width: 16ch; }
+  .spark .lede { color: var(--on-dark-2); max-width: 46ch; }
+  .versus { margin-top: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .versus article { border: 1px solid var(--dark-line); border-radius: 18px; padding: 28px; background: var(--dark-2); }
+  .versus article.us { border-color: var(--signal); }
+  .versus .eyebrow { color: var(--on-dark-2); }
+  .versus article.us .eyebrow { color: var(--signal); }
+  .versus h3 { margin: 14px 0 10px; font-size: 24px; }
+  .versus p { color: var(--on-dark-2); font-size: 15px; }
+  .versus dl { margin-top: 24px; display: grid; grid-template-columns: auto 1fr; gap: 10px 20px; font-size: 14px; border-top: 1px solid var(--dark-line); padding-top: 20px; }
+  .versus dt { font: 500 12px/1.6 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--on-dark-2); }
+  .versus dd { color: var(--on-dark); }
+  .models { margin-top: 56px; width: 100%; border-collapse: collapse; font-size: 15px; }
+  .models caption { text-align: left; padding-bottom: 16px; }
+  .models th { text-align: left; font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--on-dark-2);
+               padding: 0 16px 14px 0; border-bottom: 1px solid var(--dark-line); }
+  .models td { padding: 16px 16px 16px 0; border-bottom: 1px solid var(--dark-line); color: var(--on-dark-2); vertical-align: top; }
+  .models td:first-child { color: var(--on-dark); font-family: var(--mono); font-size: 14px; }
+  .fit { display: inline-flex; align-items: center; gap: 8px; color: var(--on-dark); white-space: nowrap; }
+  .fit::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+  .tm { margin-top: 32px; font-size: 12px; color: #6e6e74; }
+
+  /* privacy + control */
+  .pillars { margin-top: 56px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .pillars article { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 28px; }
+  .pillars .num { font: 500 12px/1 var(--mono); color: var(--ink-3); letter-spacing: .08em; }
+  .pillars h3 { margin: 40px 0 12px; }
+  .pillars p { color: var(--ink-2); font-size: 15px; }
+  .pillars ul { margin-top: 20px; list-style: none; font-size: 14px; color: var(--ink-2); border-top: 1px solid var(--line); }
+  .pillars li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .pillars li:last-child { border-bottom: 0; padding-bottom: 0; }
+  .trace { margin-top: 16px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 40px; align-items: center;
+           background: var(--dark); color: var(--on-dark); border-radius: 22px; padding: 40px; }
+  .trace p { color: var(--on-dark-2); font-size: 15px; margin-top: 12px; }
+  .trace img { border-radius: 12px; }
 
   /* the dial */
-  .dial-wrap { position: relative; width: min(100%, 560px); aspect-ratio: 1; margin: 0 auto; touch-action: none; user-select: none; }
+  .device { margin-top: 56px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: center;
+            background: var(--paper); border: 1px solid var(--line); border-radius: 22px; padding: 48px; }
+  .dial-wrap { position: relative; width: min(100%, 480px); aspect-ratio: 1; margin: 0 auto; touch-action: none; user-select: none; }
   .face { position: absolute; inset: 0; }
-  .stop { position: absolute; transform: translate(-50%, -50%);
-          font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3);
-          background: none; border: 0; padding: 6px 4px; cursor: pointer; white-space: nowrap; }
+  .stop { position: absolute; transform: translate(-50%, -50%); font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase;
+          color: var(--ink-3); background: none; border: 0; padding: 8px 6px; cursor: pointer; white-space: nowrap; }
   .stop:hover { color: var(--ink); }
   .stop[aria-current="true"] { color: var(--ink); font-weight: 600; }
-  .knob { position: absolute; inset: 21%; border-radius: 50%; cursor: grab; }
+  .knob { position: absolute; inset: 22%; border-radius: 50%; cursor: grab; }
   .knob:active { cursor: grabbing; }
-  .knob svg { width: 100%; height: 100%; display: block; }
+  .knob svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 18px 24px rgba(12, 12, 13, .14)); }
   .rotor { transform-origin: 100px 100px; }
   @media (prefers-reduced-motion: no-preference) { .rotor { transition: transform .35s cubic-bezier(.3, .7, .2, 1); } }
-  .hint { text-align: center; margin-top: 16px; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
-
-  /* the display */
-  .screen { background: var(--screen); color: var(--lcd); border-radius: 14px; padding: 28px;
-            box-shadow: inset 0 0 0 1px #000, inset 0 2px 12px rgba(0,0,0,.6); min-height: 380px;
-            display: flex; flex-direction: column; gap: 20px; }
-  .screen .top { display: flex; justify-content: space-between; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--lcd-dim); }
-  .screen h2 { font: 600 clamp(32px, 4.4vw, 52px)/1 var(--mono); letter-spacing: -0.01em; text-transform: uppercase; }
-  .screen p.what { font-size: 16px; color: #f2f2ec; max-width: 34em; }
-  .example { border-top: 1px dashed #3a3a32; padding-top: 16px; display: grid; gap: 8px; font-size: 14px; margin-top: auto; }
-  .example .tag { font-size: 11px; letter-spacing: .12em; color: var(--lcd-dim); }
-  .example .you { color: #f2f2ec; }
-  .example .you::before { content: "> "; color: var(--lcd); }
+  .hint { text-align: center; margin-top: 12px; font: 500 11px/1.4 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+  .screen { background: var(--dark); color: var(--signal); border-radius: 16px; padding: 28px; min-height: 340px;
+            box-shadow: inset 0 0 0 1px #000, inset 0 2px 12px rgba(0, 0, 0, .6); display: flex; flex-direction: column; gap: 18px; }
+  .screen .top { display: flex; justify-content: space-between; font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #a08a1e; }
+  .screen h3 { font: 600 clamp(30px, 3.6vw, 44px)/1 var(--mono); letter-spacing: -0.01em; text-transform: uppercase; }
+  .screen p.what { font-size: 16px; color: var(--on-dark); max-width: 32em; }
+  .example { border-top: 1px dashed #3a3a32; padding-top: 16px; display: grid; gap: 8px; font: 14px/1.5 var(--mono); margin-top: auto; }
+  .example .you { color: var(--on-dark); }
+  .example .you::before { content: "> "; color: var(--signal); }
   .example .k::before { content: "< "; }
 
-  .claim { max-width: 1200px; margin: 0 auto; padding: 0 24px 64px; }
-  .claim h1 { font: 600 clamp(36px, 6.4vw, 80px)/1 var(--sans); letter-spacing: -0.035em; max-width: 13ch; }
-  .promises { margin-top: 32px; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--ink); }
-  .promises div { padding: 16px 16px 0 0; }
-  .promises b { display: block; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
-  .promises span { color: var(--ink-2); font-size: 13px; }
+  /* close */
+  .close { padding: 144px 0 128px; text-align: center; }
+  .close h2 { margin: 0 auto 20px; max-width: 14ch; font-size: clamp(40px, 6vw, 80px); letter-spacing: -0.045em; }
+  .close .lede { margin: 0 auto 32px; }
+  footer { border-top: 1px solid var(--line); }
+  footer .wrap { padding-top: 24px; padding-bottom: 24px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+                 font-size: 13px; color: var(--ink-3); }
 
-  footer { border-top: 1px solid var(--line); padding: 20px 24px; display: flex; justify-content: space-between; gap: 16px;
-           flex-wrap: wrap; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
-
-  @media (max-width: 860px) {
-    .device { grid-template-columns: 1fr; gap: 32px; padding: 32px 16px 48px; }
-    .bar { padding: 0 16px; grid-template-columns: 1fr auto; }
-    .bar .ship { display: none; }
-    .claim { padding: 0 16px 48px; }
-    .promises { grid-template-columns: 1fr 1fr; gap: 0 16px; }
-    .screen { min-height: 0; padding: 22px; }
-    footer { padding: 20px 16px; }
+  @media (max-width: 960px) {
+    .nav ul { display: none; }
+    .split, .trace, .device, .hero .row { grid-template-columns: 1fr; }
+    .hero .row { gap: 28px; }
+    .split { gap: 40px; }
+    .pillars { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stats div { padding-bottom: 24px; }
+    .device { padding: 32px 24px; gap: 32px; }
+    .trace { padding: 28px; gap: 24px; }
   }
-  @media (max-width: 480px) { .stop { font-size: 9px; letter-spacing: .04em; padding: 4px 2px; } }
+  @media (max-width: 640px) {
+    :root { --gutter: 16px; }
+    .hero { padding-top: 56px; }
+    .shot { margin-top: 40px; border-radius: 14px; padding: 6px; }
+    .shot .chrome { padding: 4px 6px 8px; }
+    .shot img { border-radius: 9px; }
+    section.block { padding-top: 96px; }
+    .spark { margin-top: 96px; padding: 80px 0; }
+    .versus { grid-template-columns: 1fr; }
+    .runs .sep { display: none; }
+    .verdicts li { grid-template-columns: 1fr; gap: 4px; }
+    .models thead { display: none; }
+    .models tr { display: grid; padding: 14px 0; border-bottom: 1px solid var(--dark-line); gap: 6px; }
+    .models td { padding: 0; border: 0; }
+    .card-dark { padding: 16px; border-radius: 16px; }
+    .device { padding: 24px 16px; border-radius: 16px; }
+    .screen { min-height: 0; padding: 22px; }
+    .stop { font-size: 10px; letter-spacing: .06em; padding: 6px 2px; }
+    .nav .ship span { display: none; }
+    .close { padding: 112px 0 96px; }
+  }
 </style>
 </head>
 <body>
-<a class="skip" href="#display">Skip to the display</a>
+<a class="skip" href="#main">Skip to content</a>
 
-<header class="bar">
-  <span class="mark"><img src="icon.png" alt="">Kaliko</span>
-  <span class="count" aria-hidden="true"><span id="n">01</span> / 14</span>
-  <span class="ship">Windows · end of 2026</span>
+<header class="nav">
+  <div class="wrap">
+    <a class="mark" href="#top"><img src="icon.png" alt="" width="24" height="24">Kaliko</a>
+    <nav aria-label="Sections">
+      <ul>
+        <li><a href="#hardware">Hardware</a></li>
+        <li><a href="#spark">Low-end Spark</a></li>
+        <li><a href="#control">Privacy and control</a></li>
+        <li><a href="#dial">What it does</a></li>
+      </ul>
+    </nav>
+    <span class="ship">Windows <span>· end of 2026</span></span>
+  </div>
 </header>
 
-<main>
-  <div class="device">
-    <div>
-      <div class="dial-wrap" id="dial">
-        <div class="face" id="face"></div>
-        <div class="knob" id="knob" role="slider" tabindex="0" aria-label="What Kaliko does and makes"
-             aria-valuemin="1" aria-valuemax="14" aria-valuenow="1" aria-valuetext="Chat">
-          <svg viewBox="0 0 200 200" aria-hidden="true">
-            <circle cx="100" cy="100" r="99" fill="#d4d4ce"/>
-            <g class="rotor" id="rotor">
-              <circle cx="100" cy="100" r="93" fill="#f4f4f0" stroke="#c4c4bc"/>
-              <g id="grip" stroke="#cfcfc7" stroke-width="2"></g>
-              <circle cx="100" cy="100" r="64" fill="#efefea" stroke="#d6d6cf"/>
-              <rect x="97" y="14" width="6" height="34" rx="3" fill="#111"/>
-              <circle cx="100" cy="24" r="3" fill="#ffd400"/>
-            </g>
-            <text x="100" y="103" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.5" fill="#6b6b64">KALIKO</text>
-          </svg>
+<main id="main">
+  <section class="hero" id="top">
+    <div class="wrap">
+      <p class="eyebrow">Kaliko Workspace</p>
+      <div class="row">
+        <h1>The Spark for the lower end.</h1>
+        <div>
+          <p class="lede">Local AI on the PC you already have. A 4&nbsp;GB graphics card is enough. Your models, your data, and your rules for how they run.</p>
+          <div class="actions" style="margin-top: 28px">
+            <a class="btn btn-primary" href="#dial">See what it does</a>
+            <a class="btn btn-ghost" href="#hardware">How it fits on 4&nbsp;GB</a>
+          </div>
         </div>
       </div>
-      <p class="hint">Turn the dial: drag, scroll, or use the arrow keys</p>
-    </div>
 
-    <section class="screen" id="display" aria-live="polite" tabindex="-1">
-      <div class="top"><span id="group">Does</span><span id="code">01</span></div>
-      <h2 id="name">Chat</h2>
-      <p class="what" id="what">Answers and writing from models that run on your PC.</p>
-      <div class="example">
-        <span class="tag">EXAMPLE</span>
-        <span class="you" id="ask">Make this email shorter and kinder.</span>
-        <span class="k" id="answer">Here's a shorter version you can send.</span>
+      <figure class="shot">
+        <div class="chrome" aria-hidden="true"><i></i><i></i><i></i></div>
+        <img src="img/chat.webp" width="2000" height="1451" fetchpriority="high"
+             alt="Kaliko Workspace chat. A 4-billion-parameter Qwen model running locally through Ollama rewrites an email to be shorter and kinder, and lists what it changed.">
+      </figure>
+      <p class="caption">Kaliko Workspace answering with a 4B model through Ollama, on the machine it runs on.</p>
+
+      <div class="runs">
+        <span>Runs your models through</span>
+        <b>Ollama</b><span class="sep">/</span><b>LM Studio</b><span class="sep">/</span><b>llama.cpp</b><span class="sep">/</span><b>vLLM</b>
+        <span>Cloud providers are optional.</span>
       </div>
-    </section>
-  </div>
 
-  <div class="claim">
-    <h1>Private AI on your own PC.</h1>
-    <div class="promises">
-      <div><b>Local first</b><span>Models, chats and files stay on your computer.</span></div>
-      <div><b>Offline</b><span>No internet, and it keeps working.</span></div>
-      <div><b>No account</b><span>Install it and start.</span></div>
-      <div><b>You approve</b><span>Anything that sends or changes something asks first.</span></div>
+      <div class="stats">
+        <div><strong>4 GB</strong><span>of video memory is enough to chat, build and automate.</span></div>
+        <div><strong>0</strong><span>accounts. Install it and start, with no sign-up.</span></div>
+        <div><strong>15/15</strong><span>web questions right from a 4B model, two rounds running.</span></div>
+        <div><strong>10/12</strong><span>test apps built correctly by a 7B coding model.</span></div>
+      </div>
+      <p class="note">Figures are from Kaliko's own tests on a 4&nbsp;GB card.</p>
     </div>
-  </div>
+  </section>
+
+  <section class="block" id="hardware">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">System intelligence</p>
+        <h2>It knows your machine before you pick a model.</h2>
+        <p class="lede">Kaliko reads your GPU, your RAM and every model's real size, including the memory its context window needs. Then it tells you plainly how each model will run. Nothing is loaded to find out.</p>
+        <ul class="verdicts">
+          <li><b style="--c: var(--good)">Runs well</b><span>Fits in the GPU's memory. Full speed.</span></li>
+          <li><b style="--c: var(--slow)">Runs, slower</b><span>Split between GPU and RAM. It works, just slower.</span></li>
+          <li><b style="--c: #ef4444">Too big</b><span>Would page to disk and freeze the PC, so you're told before you click.</span></li>
+        </ul>
+      </div>
+      <div class="card-dark">
+        <img src="img/picker.webp" width="900" height="915" loading="lazy"
+             alt="Kaliko's model picker. It reads 'This machine: GeForce GTX 1650, 4 GB VRAM, 16 GB RAM' and marks deepseek-r1 1.5B and Llama 3.2 3B as Runs well, and Qwen 3.5 4B and Qwen 2.5 Coder 7B as Slower.">
+      </div>
+    </div>
+  </section>
+
+  <section class="spark" id="spark">
+    <div class="wrap">
+      <p class="eyebrow">The Spark for the lower end</p>
+      <h2>RTX Spark is a new PC. Kaliko is for the one you have.</h2>
+      <p class="lede">NVIDIA built RTX Spark so a personal AI computer could sit on a desk. Kaliko brings the same idea to hardware people already own: local models that are tuned, checked and kept on track until a small GPU is genuinely useful.</p>
+
+      <div class="versus">
+        <article>
+          <p class="eyebrow">NVIDIA RTX Spark</p>
+          <h3>A new superchip</h3>
+          <p>A Grace CPU and Blackwell GPU in one package, in new laptops and desktops.</p>
+          <dl>
+            <dt>Memory</dt><dd>Up to 128 GB, unified</dd>
+            <dt>You need</dt><dd>A new machine</dd>
+          </dl>
+        </article>
+        <article class="us">
+          <p class="eyebrow">Kaliko Workspace</p>
+          <h3>Software that makes small hardware count</h3>
+          <p>Model fit checks, right-sized context windows, and answers checked against their sources so small models stay accurate.</p>
+          <dl>
+            <dt>Memory</dt><dd>From a 4 GB graphics card</dd>
+            <dt>You need</dt><dd>The PC you have</dd>
+          </dl>
+        </article>
+      </div>
+
+      <table class="models">
+        <caption class="eyebrow">A starting set for a 4 GB card</caption>
+        <thead><tr><th scope="col">Model</th><th scope="col">Download</th><th scope="col">Used for</th><th scope="col">On 4 GB</th></tr></thead>
+        <tbody>
+          <tr><td>Qwen 3.5 4B reasoning</td><td>2.7 GB</td><td>Everyday chat and web questions</td><td><span class="fit" style="--c: var(--good)">About 90% on the GPU</span></td></tr>
+          <tr><td>qwen2.5-coder:7b</td><td>4.7 GB</td><td>Building apps</td><td><span class="fit" style="--c: var(--slow)">Partly in RAM, slower</span></td></tr>
+          <tr><td>deepseek-r1:1.5b</td><td>1.1 GB</td><td>The fastest option</td><td><span class="fit" style="--c: var(--good)">Fully on the GPU</span></td></tr>
+        </tbody>
+      </table>
+      <p class="tm">RTX Spark is a trademark of NVIDIA Corporation. Kaliko is not affiliated with or endorsed by NVIDIA.</p>
+    </div>
+  </section>
+
+  <section class="block" id="control">
+    <div class="wrap">
+      <p class="eyebrow">Privacy and control</p>
+      <h2>Your models. Your data. Your rules.</h2>
+
+      <div class="pillars">
+        <article>
+          <span class="num">01</span>
+          <h3>Private by default</h3>
+          <p>Models, chats and files stay on your computer. Nothing leaves unless you connect a cloud provider yourself.</p>
+          <ul>
+            <li>No account, no sign-up</li>
+            <li>Keeps working offline</li>
+            <li>Cloud keys stay encrypted on disk</li>
+          </ul>
+        </article>
+        <article>
+          <span class="num">02</span>
+          <h3>You decide how it runs</h3>
+          <p>Choose the model for every chat and the runtime underneath it, and set how much context it gets.</p>
+          <ul>
+            <li>Pick a model per chat, or let several answer</li>
+            <li>Set the context window to fit your card</li>
+            <li>Mix local and cloud however you want</li>
+          </ul>
+        </article>
+        <article>
+          <span class="num">03</span>
+          <h3>Nothing happens behind your back</h3>
+          <p>Anything that sends, deletes or changes something stops and asks first. Every change can be undone.</p>
+          <ul>
+            <li>Approvals that survive a restart</li>
+            <li>One-click undo for files an agent wrote</li>
+            <li>Every turn traced, step by step</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="trace">
+        <div>
+          <p class="eyebrow" style="color: var(--signal)">Every turn, traced</p>
+          <h3 style="margin-top: 14px; font-size: 26px">See what the model actually did.</h3>
+          <p>Each request is planned, run and verified by Kaliko's runtime. Open any turn to read its full trace, from the goal to the final check.</p>
+        </div>
+        <img src="img/trace.webp" width="1600" height="592" loading="lazy"
+             alt="Kaliko's runtime trace for one chat turn: goal submitted, plan created, task scheduled and running, agent finished using 520 tokens, task verified and succeeded.">
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="dial">
+    <div class="wrap">
+      <p class="eyebrow">What it does</p>
+      <h2>One workspace. Turn the dial.</h2>
+
+      <div class="device">
+        <div>
+          <div class="dial-wrap" id="dialWrap">
+            <div class="face" id="face"></div>
+            <div class="knob" id="knob" role="slider" tabindex="0" aria-label="What Kaliko does"
+                 aria-valuemin="1" aria-valuemax="6" aria-valuenow="1" aria-valuetext="Chat">
+              <svg viewBox="0 0 200 200" aria-hidden="true">
+                <circle cx="100" cy="100" r="99" fill="#dcdcd5"/>
+                <g class="rotor" id="rotor">
+                  <circle cx="100" cy="100" r="93" fill="#f7f7f3" stroke="#c9c9c1"/>
+                  <g id="grip" stroke="#d4d4cc" stroke-width="2"></g>
+                  <circle cx="100" cy="100" r="64" fill="#f1f1ec" stroke="#dadad3"/>
+                  <rect x="97" y="14" width="6" height="34" rx="3" fill="#0c0c0d"/>
+                  <circle cx="100" cy="24" r="3" fill="#ffd400"/>
+                </g>
+                <text x="100" y="103" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.5" fill="#7a7a80">KALIKO</text>
+              </svg>
+            </div>
+          </div>
+          <p class="hint">Drag, scroll, or use the arrow keys</p>
+        </div>
+
+        <div class="screen" id="display" aria-live="polite">
+          <div class="top"><span>Kaliko</span><span id="code">01 / 06</span></div>
+          <h3 id="name">Chat</h3>
+          <p class="what" id="what"></p>
+          <div class="example">
+            <span class="you" id="ask"></span>
+            <span class="k" id="answer"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="close">
+    <div class="wrap">
+      <h2>Your PC is enough.</h2>
+      <p class="lede">Kaliko Workspace comes to Windows through the Microsoft Store at the end of 2026.</p>
+      <a class="btn btn-primary" href="#top">Back to top</a>
+    </div>
+  </section>
 </main>
 
 <footer>
-  <span>Kaliko · Windows, through the Microsoft Store, end of 2026</span>
-  <span>© 2026</span>
+  <div class="wrap">
+    <span>Kaliko Workspace · Local AI for the PC you have</span>
+    <span>© 2026 Kaliko</span>
+  </div>
 </footer>
 
 <script>
-  // The fourteen stops: eight things Kaliko does, six it makes. Each example is a plain illustration.
+  // The six stops: the core of the workspace. Each example is a plain illustration.
   const STOPS = [
-    ["Chat", "Does", "Answers and writing from models that run on your PC.", "Make this email shorter and kinder.", "Here's a shorter version you can send."],
-    ["Web", "Does", "Looks things up and reads pages, when you turn it on.", "Will it rain this weekend?", "Saturday is dry. Sunday has a 70% chance of rain."],
-    ["Your apps", "Does", "Works in Chrome and apps like WhatsApp, with a frame and cursor you can see.", "Reply 'on my way' in the family group.", "Approve: send 'on my way'?"],
-    ["Your files", "Does", "Reads a folder's PDFs, Word and Excel files, and answers from them.", "What's the notice period in this contract?", "Thirty days, in section 9."],
-    ["Your day", "Does", "A morning brief, your inbox sorted by what needs an answer, and your tasks.", "Brief me.", "Two emails need replies, and one task is due today."],
-    ["Routines", "Does", "Reminders and automations that run on their own and ask before they send.", "Every morning at 8, give me the headlines.", "Saved. It runs at 8 each morning."],
-    ["Teams", "Does", "For a bigger goal, a small team of roles: planner, researcher, reviewer.", "Plan a product launch with me.", "Team ready: a planner, a researcher and a reviewer."],
-    ["Code", "Does", "Works on a code project: reads, edits, and runs commands you approve.", "Fix the failing test.", "Approve: run the tests?"],
-    ["Documents", "Makes", "Reports and letters as PDF or Word, saved in your folder.", "Write a one-page summary as a PDF.", "Summary.pdf is saved in this folder."],
-    ["Sheets", "Makes", "Spreadsheets as Excel or CSV.", "Make a budget with a total for each month.", "Budget.xlsx is ready."],
-    ["Slides", "Makes", "Decks as PowerPoint.", "Turn these notes into five slides.", "Notes.pptx: five slides."],
-    ["Pictures", "Makes", "Images, drawn on your PC.", "Draw a poster for a bake sale.", "poster.png, made on this PC."],
-    ["Apps", "Makes", "Small tools you describe, built and run on your PC.", "Build me an expense tracker.", "Expense Tracker is on your Home."],
-    ["Automations", "Makes", "Routines you describe in a sentence, kept and run for you.", "When a file lands in Invoices, add it to my sheet.", "Saved. It asks before it changes the sheet."],
+    ["Chat", "Answers, drafts and web lookups from a model on your PC, with sources. What the web didn't say is taken out.", "Will it rain this weekend?", "Saturday is dry. Sunday has a 70% chance of rain. 2 sources."],
+    ["Files", "Reads the PDFs, Word and Excel files in a folder, and answers from them.", "What's the notice period in this contract?", "Thirty days, in section 9."],
+    ["Apps", "Describe a tool. Kaliko writes it, checks every action, and runs it on your PC.", "Build me a reading log.", "Reading Log is ready in Apps."],
+    ["Automations", "Say when it should run. It runs on its own and asks before it sends anything.", "Every morning at 7, save the headlines to my app.", "Saved. It runs at 7 each morning."],
+    ["AI Team", "For a bigger goal: a few roles, each given a model your machine can actually run.", "Plan a product launch with me.", "Team ready: a planner, a researcher and a reviewer."],
+    ["Code", "Reads and edits a project. Every change is recorded and can be undone.", "Fix the failing test.", "Approve: run the tests?"],
   ];
   const N = STOPS.length, STEP = 360 / N;
-  const dial = document.getElementById("dial"), face = document.getElementById("face"),
+  const dial = document.getElementById("dialWrap"), face = document.getElementById("face"),
         knob = document.getElementById("knob"), rotor = document.getElementById("rotor");
   let index = 0, turns = 0;   // turns: the knob keeps going round, never spins back the long way
 
@@ -183,7 +455,7 @@
     grip.insertAdjacentHTML("beforeend",
       `<line x1="${(100 + 85 * Math.sin(a)).toFixed(1)}" y1="${(100 - 85 * Math.cos(a)).toFixed(1)}" x2="${(100 + 92 * Math.sin(a)).toFixed(1)}" y2="${(100 - 92 * Math.cos(a)).toFixed(1)}"/>`);
   }
-  // the scale around the knob: a tick per stop (long for "does", short for "makes"), and its name
+  // the scale around the knob: a tick per stop, and its name
   const scale = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   scale.setAttribute("viewBox", "0 0 200 200");
   scale.setAttribute("aria-hidden", "true");
@@ -191,9 +463,8 @@
   face.appendChild(scale);
   STOPS.forEach(([name], i) => {
     const a = (i * STEP) * Math.PI / 180;
-    const r1 = i < 8 ? 64 : 66.5, r2 = 70;
     scale.insertAdjacentHTML("beforeend",
-      `<line x1="${100 + r1 * Math.sin(a)}" y1="${100 - r1 * Math.cos(a)}" x2="${100 + r2 * Math.sin(a)}" y2="${100 - r2 * Math.cos(a)}" stroke="#111" stroke-width="${i < 8 ? 1.4 : .8}"/>`);
+      `<line x1="${100 + 63 * Math.sin(a)}" y1="${100 - 63 * Math.cos(a)}" x2="${100 + 70 * Math.sin(a)}" y2="${100 - 70 * Math.cos(a)}" stroke="#0c0c0d" stroke-width="1.4"/>`);
     const b = document.createElement("button");
     b.className = "stop"; b.type = "button"; b.textContent = name; b.tabIndex = -1;
     const r = 41;   // percent of the dial's width, just outside the ticks
@@ -210,11 +481,8 @@
     if (delta < -N / 2) delta += N;
     turns += delta; index = next;
     rotor.style.transform = `rotate(${turns * STEP}deg)`;
-    const [name, group, what, ask, answer] = STOPS[index];
-    const code = String(index + 1).padStart(2, "0");
-    document.getElementById("n").textContent = code;
-    document.getElementById("code").textContent = code;
-    document.getElementById("group").textContent = group;
+    const [name, what, ask, answer] = STOPS[index];
+    document.getElementById("code").textContent = `${String(index + 1).padStart(2, "0")} / ${String(N).padStart(2, "0")}`;
     document.getElementById("name").textContent = name;
     document.getElementById("what").textContent = what;
     document.getElementById("ask").textContent = ask;

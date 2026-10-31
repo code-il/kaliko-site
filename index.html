@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-oUOJx5592573ECNVJomvqdihfpVdRhilANNjMlF0tzA='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Teds/MnfEcQMG78vjzl1/69QrnIuDqPxzkg5ITndmNs='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <title>Kaliko Workspace: the Spark for the lower end</title>
 <meta name="description" content="Kaliko Workspace runs local AI on the PC you already have, on its own built-in engine. It chats, reads your files, plans your day, uses Chrome and your apps, and builds apps and automations. Private by default.">
@@ -87,7 +87,7 @@
   .caption { margin-top: 14px; font-size: 14px; color: var(--ink-3); }
 
   /* the tour: one screenshot per part of Kaliko */
-  .tour { margin-top: 64px; }
+  .tour { margin-top: 48px; }
   .tour .shot { margin-top: 16px; }
   .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
   .tabs button { height: 38px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper);
@@ -131,7 +131,6 @@
   .card-dark img { border-radius: 12px; width: 100%; }
   .row-head { display: grid; grid-template-columns: minmax(0, 1fr) 440px; align-items: end; gap: 48px; margin-top: 16px; }
   .row-head h2 { max-width: 14ch; }
-  #day .shot { margin-top: 48px; }
 
   /* the spark band */
   .spark { margin-top: 128px; background: var(--dark); color: var(--on-dark); padding: 112px 0; }
@@ -248,7 +247,7 @@
     <a class="mark" href="#top"><img src="icon.png" alt="" width="24" height="24">Kaliko</a>
     <nav aria-label="Sections">
       <ul>
-        <li><a href="#day">Your day</a></li>
+        <li><a href="#workspace">Workspace</a></li>
         <li><a href="#apps">Your apps</a></li>
         <li><a href="#hardware">Hardware</a></li>
         <li><a href="#control">Privacy and control</a></li>
@@ -274,47 +273,12 @@
         </div>
       </div>
 
-      <div class="tour" id="tour">
-        <div class="tabs" role="tablist" aria-label="Parts of Kaliko">
-          <button type="button" role="tab" aria-selected="true" aria-controls="s-chat" id="t-chat">Chat</button>
-          <button type="button" role="tab" aria-selected="false" aria-controls="s-code" id="t-code" tabindex="-1">Code</button>
-          <button type="button" role="tab" aria-selected="false" aria-controls="s-team" id="t-team" tabindex="-1">AI Team</button>
-          <button type="button" role="tab" aria-selected="false" aria-controls="s-day" id="t-day" tabindex="-1">Your day</button>
-          <button type="button" role="tab" aria-selected="false" aria-controls="s-web" id="t-web" tabindex="-1">Chrome</button>
-        </div>
-        <div class="shot">
-          <div class="chrome"><i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i>
-            <span class="arrows"><button type="button" class="arrow" id="prev" aria-label="Previous">&#8592;</button><button type="button" class="arrow" id="next" aria-label="Next">&#8594;</button></span>
-          </div>
-          <div class="slides" id="slides" tabindex="0" aria-label="Screenshots of Kaliko">
-            <figure class="slide" id="s-chat" role="tabpanel" aria-labelledby="t-chat">
-              <img src="img/chat.webp" width="2000" height="1250" fetchpriority="high"
-                   alt="Kaliko chat in the Glass look: five weeknight dinners under $60 as a table with cooking times and costs, a shopping list, and a reminder set for Saturday at 10am.">
-              <figcaption>Plans, tables and reminders from a 4B model on Kaliko's own engine. Sample conversation.</figcaption>
-            </figure>
-            <figure class="slide" id="s-code" role="tabpanel" aria-labelledby="t-code">
-              <img src="img/code.webp" width="2000" height="1250" loading="lazy"
-                   alt="Kaliko's Code section: a task to add a multiply function and tests, with Kaliko's summary of changes and passing tests, and the task's plan beside it with tabs for Changes, Terminal, Preview, Editor and Git.">
-              <figcaption>Code: a real task, planned step by step, with its changes, terminal and tests beside the chat.</figcaption>
-            </figure>
-            <figure class="slide" id="s-team" role="tabpanel" aria-labelledby="t-team">
-              <img src="img/team.webp" width="2000" height="1250" loading="lazy"
-                   alt="Kaliko's AI Team page: describe the work and Kaliko proposes a team, or start from a software startup, research lab, investment research firm or marketing agency.">
-              <figcaption>AI Team: describe the work and Kaliko proposes the roles, each on a model your PC can run.</figcaption>
-            </figure>
-            <figure class="slide" id="s-day" role="tabpanel" aria-labelledby="t-day">
-              <img src="img/home.webp" width="2000" height="1250" loading="lazy"
-                   alt="Kaliko's Home dashboard: a brief of the day, open tasks, a sorted inbox, weather and an app as a widget.">
-              <figcaption>Home: your day, your mail and your apps as widgets. Sample data.</figcaption>
-            </figure>
-            <figure class="slide" id="s-web" role="tabpanel" aria-labelledby="t-web">
-              <img src="img/browse.webp" width="2000" height="717" loading="lazy"
-                   alt="Kaliko's frame and cursor on a library page in Chrome, renewing a book.">
-              <figcaption>In your Chrome: a frame while Kaliko works, and its cursor on what it clicks. Sample page.</figcaption>
-            </figure>
-          </div>
-        </div>
-      </div>
+      <figure class="shot hero-shot">
+        <div class="chrome" aria-hidden="true"><i></i><i></i><i></i></div>
+        <img src="img/home.webp" width="2000" height="1250" fetchpriority="high"
+             alt="Kaliko's Dashboard: a brief of the day, the weather, an inbox sorted into Needs your answer, Worth reading and Can wait, and a stock portfolio app Kaliko built, running as a widget.">
+      </figure>
+      <p class="caption">The Dashboard: your day, your mail and an app Kaliko built for you, side by side, all running on your PC. Sample data.</p>
 
       <div class="runs">
         <span>Runs models on</span>
@@ -334,19 +298,48 @@
     </div>
   </section>
 
-  <section class="block" id="day">
+  <section class="block" id="workspace">
     <div class="wrap">
-      <p class="eyebrow">Your day</p>
+      <p class="eyebrow">One workspace</p>
       <div class="row-head">
-        <h2>Home is a dashboard of your day.</h2>
-        <p class="lede">A brief in a few lines, your mail sorted by what needs an answer, today's tasks, the weather, and the apps you've built, as widgets you place yourself. Replies are drafted for you to approve. Nothing is sent until you press Send.</p>
+        <h2>Not just a coding agent.</h2>
+        <p class="lede">Chat, code, a team of AI roles and automations live together in each project, on models your PC can run. Pick one to look around.</p>
       </div>
-      <figure class="shot">
-        <div class="chrome" aria-hidden="true"><i></i><i></i><i></i></div>
-        <img src="img/home.webp" width="2000" height="1250" loading="lazy"
-             alt="Kaliko's Home dashboard: a brief of the day, three open tasks, an inbox sorted into Needs your answer, Worth reading and Can wait, a five-day weather widget, and a portfolio app shown as a widget.">
-      </figure>
-      <p class="caption">Kaliko's Home, filled with sample mail, tasks and weather.</p>
+      <div class="tour" id="tour">
+        <div class="tabs" role="tablist" aria-label="Parts of Kaliko">
+          <button type="button" role="tab" aria-selected="true" aria-controls="s-chat" id="t-chat">Chat</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="s-code" id="t-code" tabindex="-1">Code</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="s-team" id="t-team" tabindex="-1">AI Team</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="s-auto" id="t-auto" tabindex="-1">Automations</button>
+        </div>
+        <div class="shot">
+          <div class="chrome"><i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i>
+            <span class="arrows"><button type="button" class="arrow" id="prev" aria-label="Previous">&#8592;</button><button type="button" class="arrow" id="next" aria-label="Next">&#8594;</button></span>
+          </div>
+          <div class="slides" id="slides" tabindex="0" aria-label="Screenshots of Kaliko">
+            <figure class="slide" id="s-chat" role="tabpanel" aria-labelledby="t-chat">
+              <img src="img/chat.webp" width="2000" height="1250" loading="lazy"
+                   alt="Kaliko chat: five weeknight dinners under $60 as a table with cooking times and costs, a shopping list, and a reminder set for Saturday at 10am.">
+              <figcaption>Chat: plans, tables and reminders from a 4B model on Kaliko's own engine. Sample conversation.</figcaption>
+            </figure>
+            <figure class="slide" id="s-code" role="tabpanel" aria-labelledby="t-code">
+              <img src="img/code.webp" width="2000" height="1250" loading="lazy"
+                   alt="Kaliko's Code section: a task to add a multiply function and tests, with Kaliko's summary of changes and passing tests, and the task's plan beside it with tabs for Changes, Terminal, Preview, Editor and Git.">
+              <figcaption>Code: a real task, planned step by step, with its changes, terminal and tests beside the chat.</figcaption>
+            </figure>
+            <figure class="slide" id="s-team" role="tabpanel" aria-labelledby="t-team">
+              <img src="img/team.webp" width="2000" height="1250" loading="lazy"
+                   alt="Kaliko's AI Team page: describe the work and Kaliko proposes a team, or start from a software startup, research lab, investment research firm or marketing agency.">
+              <figcaption>AI Team: describe the work and Kaliko proposes the roles, each on a model your PC can run.</figcaption>
+            </figure>
+            <figure class="slide" id="s-auto" role="tabpanel" aria-labelledby="t-auto">
+              <img src="img/automations.webp" width="2000" height="1250" loading="lazy"
+                   alt="Kaliko's Build page, Automate anything in words: automations for morning headlines, an invoices folder into a bills sheet, a weekly spending summary, and drafted replies to client mail.">
+              <figcaption>Automations: say what should happen and when. Kaliko builds the steps and asks before it sends anything. Sample automations.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -541,7 +534,7 @@
   const STOPS = [
     ["Chat", "Answers, drafts and web lookups from a model on your PC, with sources. It remembers what you ask it to, and reminds you on time.", "Remind me to call the bank at 6pm.", "Done. I'll remind you at 6pm."],
     ["Files", "Reads the PDFs, Word and Excel files in a project's folder, and answers from them.", "What's the notice period in this contract?", "Thirty days, in section 9."],
-    ["Your day", "A brief of your day, mail sorted by what needs you, and replies drafted for you to approve.", "Brief me.", "2 meetings, 1 reply waiting for you, books due Monday."],
+    ["Dashboard", "A brief of your day, mail sorted by what needs you, and replies drafted for you to approve.", "Brief me.", "2 meetings, 1 reply waiting for you, books due Monday."],
     ["Your apps", "Works in your Chrome and in apps like WhatsApp, with a frame and cursor you can see.", "Renew my library books.", "Approve: use the library's site in this chat?"],
     ["Pictures", "Draws pictures on your PC, and reads the ones you give it.", "Draw a poster for the bake sale.", "Here it is, with the date in the corner."],
     ["Apps", "Describe a tool. Kaliko writes it, checks every action, and runs it sandboxed on your PC.", "Build me a reading log.", "Reading Log is ready in Apps."],

@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Teds/MnfEcQMG78vjzl1/69QrnIuDqPxzkg5ITndmNs='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-tuiV6t0AWWrzqkeZcaVSlCz0fJXYhynMYbU84RuOGeM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <title>Kaliko Workspace: the Spark for the lower end</title>
-<meta name="description" content="Kaliko Workspace runs local AI on the PC you already have, on its own built-in engine. It chats, reads your files, plans your day, uses Chrome and your apps, and builds apps and automations. Private by default.">
+<meta name="description" content="Kaliko Workspace runs local AI on the PC you already have, on its own built-in engine. It chats, reads your files, plans your day, tracks your portfolio, and builds apps and automations. Private by default.">
 <meta property="og:title" content="Kaliko Workspace: the Spark for the lower end">
 <meta property="og:description" content="Local AI on the PC you already have, on Kaliko's own engine. No Ollama, no account, works offline.">
 <meta property="og:image" content="https://kalikoproject.com/img/home.webp">
@@ -133,6 +133,24 @@
   .row-head h2 { max-width: 14ch; }
 
   /* the spark band */
+  .si { margin-top: 128px; background: var(--dark); color: var(--on-dark); padding: 112px 0; }
+  .si .eyebrow { color: var(--signal); }
+  .si h2 { margin: 16px 0 20px; max-width: 15ch; font-size: clamp(40px, 6vw, 80px); letter-spacing: -0.045em; }
+  .si h2 em { font-style: normal; color: var(--signal); }
+  .si .lede { color: var(--on-dark-2); max-width: 46ch; }
+  .si .big { margin-top: 72px; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(255, 255, 255, .22); }
+  .si .big div { padding: 28px 24px 0 0; }
+  .si .big strong { display: block; font: 600 clamp(44px, 5.4vw, 76px)/1 var(--display); letter-spacing: -0.045em; color: var(--on-dark); }
+  .si .big span { display: block; margin-top: 12px; font-size: 15px; color: var(--on-dark-2); max-width: 24ch; }
+  .si .pillars { margin-top: 72px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .si .pillars article { padding: 28px; border-radius: 16px; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .1); }
+  .si .pillars h3 { font: 600 20px/1.2 var(--display); letter-spacing: -0.02em; margin: 0 0 10px; color: var(--on-dark); }
+  .si .pillars p { font-size: 15px; color: var(--on-dark-2); }
+  @media (max-width: 960px) {
+    .si .big { grid-template-columns: repeat(2, 1fr); row-gap: 32px; }
+    .si .pillars { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) { .si { margin-top: 96px; padding: 80px 0; } .si .big { margin-top: 48px; } .si .pillars { margin-top: 48px; } }
   .spark { margin-top: 128px; background: var(--dark); color: var(--on-dark); padding: 112px 0; }
   .spark .eyebrow { color: var(--signal); }
   .spark h2 { margin: 16px 0 20px; max-width: 16ch; }
@@ -247,8 +265,8 @@
     <a class="mark" href="#top"><img src="icon.png" alt="" width="24" height="24">Kaliko</a>
     <nav aria-label="Sections">
       <ul>
+        <li><a href="#si">Kaliko SI</a></li>
         <li><a href="#workspace">Workspace</a></li>
-        <li><a href="#apps">Your apps</a></li>
         <li><a href="#hardware">Hardware</a></li>
         <li><a href="#control">Privacy and control</a></li>
         <li><a href="#dial">What it does</a></li>
@@ -261,7 +279,7 @@
 <main id="main">
   <section class="hero" id="top">
     <div class="wrap">
-      <p class="eyebrow">Kaliko Workspace</p>
+      <p class="eyebrow">Kaliko SI · System Intelligence</p>
       <div class="row">
         <h1>The Spark for the lower end.</h1>
         <div>
@@ -292,9 +310,30 @@
         <div><strong>0</strong><span>other programs to install. Kaliko downloads its engine and checks every model it fetches.</span></div>
         <div><strong>51 tok/s</strong><span>from Qwen3.5 4B on Kaliko's engine, faster than Ollama's 48 on the same file.</span></div>
         <div><strong>17/18</strong><span>everyday tasks done right by the 4B, from chat to building an app.</span></div>
-        <div><strong>12/12</strong><span>daily-life and browser tasks passed by the 4B.</span></div>
+        <div><strong>12/12</strong><span>everyday tasks passed by the 4B, from reminders to web lookups.</span></div>
       </div>
       <p class="note">Figures are from Kaliko's own tests on a laptop with a 6&nbsp;GB GTX&nbsp;1660&nbsp;Ti and 16&nbsp;GB of RAM.</p>
+    </div>
+  </section>
+
+  <section class="si" id="si">
+    <div class="wrap">
+      <p class="eyebrow">Kaliko SI</p>
+      <h2>Not super intelligence. <em>System</em> intelligence.</h2>
+      <p class="lede">AI that lives in your system, not on someone else's server. It knows your PC, your files and your day, it works when the internet doesn't, and it answers to you alone.</p>
+
+      <div class="big">
+        <div><strong>$0</strong><span>a month for local models. No account and no subscription, for as long as you use it.</span></div>
+        <div><strong>100%</strong><span>of your chats, files and memory stay on your PC, unless you pick a cloud model or the web.</span></div>
+        <div><strong>6&nbsp;GB</strong><span>graphics card is all it was built and tested on. No new PC needed.</span></div>
+        <div><strong>Offline</strong><span>once a model is downloaded. On a plane, in a basement, with the router off.</span></div>
+      </div>
+
+      <div class="pillars">
+        <article><h3>Knows your PC</h3><p>It reads your graphics card and memory, and tells you which models will run well before you download one.</p></article>
+        <article><h3>Knows your work</h3><p>Your projects, files, mail and calendar sit in one place, so it answers from what's actually yours.</p></article>
+        <article><h3>Answers to you</h3><p>It asks before it sends, posts or runs anything, and every step is in a log you can check.</p></article>
+      </div>
     </div>
   </section>
 
@@ -343,29 +382,11 @@
     </div>
   </section>
 
-  <section class="block" id="apps">
-    <div class="wrap split">
-      <div>
-        <p class="eyebrow">Your apps</p>
-        <h2>It uses Chrome and your apps, where you can see it.</h2>
-        <p class="lede">Ask Kaliko to do something on a site or in an app on your PC. It works in your own Chrome through the Kaliko extension, and in desktop apps like WhatsApp. A frame shows it's at work, and its cursor moves to each thing it clicks.</p>
-        <ul class="verdicts">
-          <li><b style="--c: var(--signal)">You approve</b><span>It asks before it acts, once for each site in a chat.</span></li>
-          <li><b style="--c: var(--signal)">It sees</b><span>It reads the page or a screenshot of the window, the way a person looks.</span></li>
-          <li><b style="--c: var(--signal)">It stays out</b><span>It never presses sign-in buttons or opens a chat you didn't name.</span></li>
-        </ul>
-      </div>
-      <div class="card-dark">
-        <img src="img/browse.webp" width="2000" height="717" loading="lazy"
-             alt="A library account page in Chrome with Kaliko's frame around it, a tag reading 'Kaliko is using this page', and Kaliko's cursor on a Renew button labelled 'Renewing The Overstory'.">
-      </div>
-    </div>
-  </section>
 
   <section class="block" id="hardware">
     <div class="wrap split">
       <div>
-        <p class="eyebrow">System intelligence</p>
+        <p class="eyebrow">Knows your PC</p>
         <h2>It knows your machine before you pick a model.</h2>
         <p class="lede">Kaliko reads your graphics card, your memory and each model's real size, then tells you plainly how it will run. Download a model once and Kaliko runs it itself: free and offline. Each download is checked against its published fingerprint.</p>
         <ul class="verdicts">
@@ -524,7 +545,7 @@
 
 <footer>
   <div class="wrap">
-    <span>Kaliko Workspace · Local AI for the PC you have</span>
+    <span>Kaliko SI · System Intelligence for the PC you have</span>
     <span>© 2026 Kaliko</span>
   </div>
 </footer>
@@ -535,7 +556,7 @@
     ["Chat", "Answers, drafts and web lookups from a model on your PC, with sources. It remembers what you ask it to, and reminds you on time.", "Remind me to call the bank at 6pm.", "Done. I'll remind you at 6pm."],
     ["Files", "Reads the PDFs, Word and Excel files in a project's folder, and answers from them.", "What's the notice period in this contract?", "Thirty days, in section 9."],
     ["Dashboard", "A brief of your day, mail sorted by what needs you, and replies drafted for you to approve.", "Brief me.", "2 meetings, 1 reply waiting for you, books due Monday."],
-    ["Your apps", "Works in your Chrome and in apps like WhatsApp, with a frame and cursor you can see.", "Renew my library books.", "Approve: use the library's site in this chat?"],
+    ["Portfolio", "Your holdings on the Dashboard: today's move, your gain and daily candlesticks, kept for offline.", "How's my portfolio today?", "Down 1.8% today, up 74% since you bought."],
     ["Pictures", "Draws pictures on your PC, and reads the ones you give it.", "Draw a poster for the bake sale.", "Here it is, with the date in the corner."],
     ["Apps", "Describe a tool. Kaliko writes it, checks every action, and runs it sandboxed on your PC.", "Build me a reading log.", "Reading Log is ready in Apps."],
     ["Automations", "Say when it should run. It runs on its own and asks before it sends anything.", "Every morning at 7, save the headlines to my app.", "Saved. It runs at 7 each morning."],

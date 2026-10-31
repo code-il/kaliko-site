@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-eB7bZbyDHpAfaBOWeuUNErjSQd+lGFKm8nPa5w3dEo8='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-oUOJx5592573ECNVJomvqdihfpVdRhilANNjMlF0tzA='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <title>Kaliko Workspace: the Spark for the lower end</title>
 <meta name="description" content="Kaliko Workspace runs local AI on the PC you already have, on its own built-in engine. It chats, reads your files, plans your day, uses Chrome and your apps, and builds apps and automations. Private by default.">
@@ -85,6 +85,28 @@
   .shot .chrome i { width: 11px; height: 11px; border-radius: 50%; background: #3a3a3e; }
   .shot img { border-radius: 12px; }
   .caption { margin-top: 14px; font-size: 14px; color: var(--ink-3); }
+
+  /* the tour: one screenshot per part of Kaliko */
+  .tour { margin-top: 64px; }
+  .tour .shot { margin-top: 16px; }
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tabs button { height: 38px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper);
+                 font: 500 14px/1 var(--sans); color: var(--ink-2); cursor: pointer; }
+  .tabs button:hover { border-color: var(--ink-3); color: var(--ink); }
+  .tabs button[aria-selected="true"] { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+  .shot .chrome { align-items: center; }
+  .arrows { margin-left: auto; display: flex; gap: 6px; }
+  .arrow { width: 30px; height: 26px; border-radius: 8px; border: 1px solid var(--dark-line); background: var(--dark-2);
+           color: var(--on-dark-2); font-size: 14px; cursor: pointer; }
+  .arrow:hover { color: var(--signal); }
+  .arrow:focus-visible, .tabs button:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+  .slides { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; border-radius: 12px; }
+  .slides::-webkit-scrollbar { display: none; }
+  .slides:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+  .slide { flex: 0 0 100%; scroll-snap-align: start; }
+  .slide img { width: 100%; aspect-ratio: 16 / 10; object-fit: contain; background: #0b0b0c; border-radius: 12px; }
+  .slide figcaption { padding: 12px 6px 4px; font-size: 14px; color: var(--on-dark-2); }
+  @media (prefers-reduced-motion: no-preference) { .slides { scroll-behavior: smooth; } }
 
   /* runtimes + stats */
   .runs { padding: 56px 0 0; display: flex; gap: 12px 28px; flex-wrap: wrap; align-items: center; color: var(--ink-2); font-size: 15px; }
@@ -252,12 +274,47 @@
         </div>
       </div>
 
-      <figure class="shot">
-        <div class="chrome" aria-hidden="true"><i></i><i></i><i></i></div>
-        <img src="img/chat.webp" width="2000" height="1250" fetchpriority="high"
-             alt="Kaliko Workspace chat, in the Glass look. Qwen3.5 4B, running on Kaliko's own engine, rewrites a note to a landlord to be shorter and politer.">
-      </figure>
-      <p class="caption">A real answer from Qwen3.5 4B on Kaliko's own engine, on a laptop with a 6&nbsp;GB GTX&nbsp;1660&nbsp;Ti. Nothing left the PC.</p>
+      <div class="tour" id="tour">
+        <div class="tabs" role="tablist" aria-label="Parts of Kaliko">
+          <button type="button" role="tab" aria-selected="true" aria-controls="s-chat" id="t-chat">Chat</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="s-code" id="t-code" tabindex="-1">Code</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="s-team" id="t-team" tabindex="-1">AI Team</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="s-day" id="t-day" tabindex="-1">Your day</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="s-web" id="t-web" tabindex="-1">Chrome</button>
+        </div>
+        <div class="shot">
+          <div class="chrome"><i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i>
+            <span class="arrows"><button type="button" class="arrow" id="prev" aria-label="Previous">&#8592;</button><button type="button" class="arrow" id="next" aria-label="Next">&#8594;</button></span>
+          </div>
+          <div class="slides" id="slides" tabindex="0" aria-label="Screenshots of Kaliko">
+            <figure class="slide" id="s-chat" role="tabpanel" aria-labelledby="t-chat">
+              <img src="img/chat.webp" width="2000" height="1250" fetchpriority="high"
+                   alt="Kaliko chat in the Glass look: five weeknight dinners under $60 as a table with cooking times and costs, a shopping list, and a reminder set for Saturday at 10am.">
+              <figcaption>Plans, tables and reminders from a 4B model on Kaliko's own engine. Sample conversation.</figcaption>
+            </figure>
+            <figure class="slide" id="s-code" role="tabpanel" aria-labelledby="t-code">
+              <img src="img/code.webp" width="2000" height="1250" loading="lazy"
+                   alt="Kaliko's Code section: a task to add a multiply function and tests, with Kaliko's summary of changes and passing tests, and the task's plan beside it with tabs for Changes, Terminal, Preview, Editor and Git.">
+              <figcaption>Code: a real task, planned step by step, with its changes, terminal and tests beside the chat.</figcaption>
+            </figure>
+            <figure class="slide" id="s-team" role="tabpanel" aria-labelledby="t-team">
+              <img src="img/team.webp" width="2000" height="1250" loading="lazy"
+                   alt="Kaliko's AI Team page: describe the work and Kaliko proposes a team, or start from a software startup, research lab, investment research firm or marketing agency.">
+              <figcaption>AI Team: describe the work and Kaliko proposes the roles, each on a model your PC can run.</figcaption>
+            </figure>
+            <figure class="slide" id="s-day" role="tabpanel" aria-labelledby="t-day">
+              <img src="img/home.webp" width="2000" height="1250" loading="lazy"
+                   alt="Kaliko's Home dashboard: a brief of the day, open tasks, a sorted inbox, weather and an app as a widget.">
+              <figcaption>Home: your day, your mail and your apps as widgets. Sample data.</figcaption>
+            </figure>
+            <figure class="slide" id="s-web" role="tabpanel" aria-labelledby="t-web">
+              <img src="img/browse.webp" width="2000" height="717" loading="lazy"
+                   alt="Kaliko's frame and cursor on a library page in Chrome, renewing a book.">
+              <figcaption>In your Chrome: a frame while Kaliko works, and its cursor on what it clicks. Sample page.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
 
       <div class="runs">
         <span>Runs models on</span>
@@ -570,6 +627,36 @@
   }, { passive: false });
 
   go(0);
+
+  // The tour at the top: tabs, arrows and swiping all move the same strip of screenshots.
+  const slides = document.getElementById("slides");
+  const tabs = [...document.querySelectorAll("#tour [role=tab]")];
+  let shown = 0;
+  function mark(i) {
+    shown = i;
+    tabs.forEach((t, j) => { t.setAttribute("aria-selected", j === i ? "true" : "false"); t.tabIndex = j === i ? 0 : -1; });
+  }
+  function show(i) {
+    const next = (i + tabs.length) % tabs.length;
+    slides.scrollTo({ left: next * slides.clientWidth });
+    mark(next);
+  }
+  tabs.forEach((t, i) => t.addEventListener("click", () => show(i)));
+  document.getElementById("tour").querySelector("[role=tablist]").addEventListener("keydown", (e) => {
+    const step = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+    if (step) { e.preventDefault(); show(shown + step); tabs[shown].focus(); }
+  });
+  slides.addEventListener("keydown", (e) => {
+    const step = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+    if (step) { e.preventDefault(); show(shown + step); }
+  });
+  document.getElementById("prev").addEventListener("click", () => show(shown - 1));
+  document.getElementById("next").addEventListener("click", () => show(shown + 1));
+  let settle;
+  slides.addEventListener("scroll", () => {   // a swipe picks its tab once the strip comes to rest
+    clearTimeout(settle);
+    settle = setTimeout(() => mark(Math.round(slides.scrollLeft / slides.clientWidth)), 80);
+  });
 </script>
 </body>
 </html>
